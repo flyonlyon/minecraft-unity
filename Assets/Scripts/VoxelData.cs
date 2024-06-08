@@ -13,7 +13,7 @@ public static class VoxelData {
 
     public static float minLightLevel = 0.1f;
     public static float maxLightLevel = 0.9f;
-    public static float lightFalloff = 0.08f;
+    public static float unitOfLight { get { return 0.0625f; } } // unitOfLight = 1 / 16
 
     public static readonly int textureAtlasSizeInBlocks = 16;
     public static float normalizedBlockTextureSize { get { return 1f / (float)textureAtlasSizeInBlocks; } }

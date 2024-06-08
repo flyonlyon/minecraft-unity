@@ -297,8 +297,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   settings:
+    loadDistance: 16
     viewDistance: 4
     enableThreading: 1
+    clouds: 1
     mouseSensitivity: 5
   biome: {fileID: 11400000, guid: 7d1360924210249f6b87319a0a3544db, type: 2}
   globalLightLevel: 1
@@ -313,7 +315,7 @@ MonoBehaviour:
     blockIcon: {fileID: 0}
     isSolid: 0
     renderNeighbors: 1
-    transparency: 1
+    opacity: 0
     maxStackSize: 0
     topFaceTexture: 0
     frontFaceTexture: 0
@@ -325,7 +327,7 @@ MonoBehaviour:
     blockIcon: {fileID: -2135083169, guid: a7dac7be2b37549909612e597d5ffea4, type: 3}
     isSolid: 1
     renderNeighbors: 0
-    transparency: 0
+    opacity: 15
     maxStackSize: 64
     topFaceTexture: 0
     frontFaceTexture: 0
@@ -337,7 +339,7 @@ MonoBehaviour:
     blockIcon: {fileID: 466796369, guid: a7dac7be2b37549909612e597d5ffea4, type: 3}
     isSolid: 1
     renderNeighbors: 0
-    transparency: 0
+    opacity: 15
     maxStackSize: 64
     topFaceTexture: 1
     frontFaceTexture: 2
@@ -349,7 +351,7 @@ MonoBehaviour:
     blockIcon: {fileID: 1528604508, guid: a7dac7be2b37549909612e597d5ffea4, type: 3}
     isSolid: 1
     renderNeighbors: 0
-    transparency: 0
+    opacity: 15
     maxStackSize: 64
     topFaceTexture: 3
     frontFaceTexture: 3
@@ -361,7 +363,7 @@ MonoBehaviour:
     blockIcon: {fileID: -1068425898, guid: a7dac7be2b37549909612e597d5ffea4, type: 3}
     isSolid: 1
     renderNeighbors: 0
-    transparency: 0
+    opacity: 15
     maxStackSize: 64
     topFaceTexture: 4
     frontFaceTexture: 4
@@ -373,7 +375,7 @@ MonoBehaviour:
     blockIcon: {fileID: 309166713, guid: a7dac7be2b37549909612e597d5ffea4, type: 3}
     isSolid: 1
     renderNeighbors: 0
-    transparency: 0
+    opacity: 15
     maxStackSize: 64
     topFaceTexture: 5
     frontFaceTexture: 5
@@ -385,7 +387,7 @@ MonoBehaviour:
     blockIcon: {fileID: 568429565, guid: a7dac7be2b37549909612e597d5ffea4, type: 3}
     isSolid: 1
     renderNeighbors: 0
-    transparency: 0
+    opacity: 15
     maxStackSize: 64
     topFaceTexture: 6
     frontFaceTexture: 6
@@ -397,7 +399,7 @@ MonoBehaviour:
     blockIcon: {fileID: -1572316903, guid: a7dac7be2b37549909612e597d5ffea4, type: 3}
     isSolid: 1
     renderNeighbors: 0
-    transparency: 0
+    opacity: 15
     maxStackSize: 64
     topFaceTexture: 7
     frontFaceTexture: 7
@@ -409,7 +411,7 @@ MonoBehaviour:
     blockIcon: {fileID: 1961054751, guid: a7dac7be2b37549909612e597d5ffea4, type: 3}
     isSolid: 1
     renderNeighbors: 1
-    transparency: 1
+    opacity: 0
     maxStackSize: 64
     topFaceTexture: 8
     frontFaceTexture: 8
@@ -421,7 +423,7 @@ MonoBehaviour:
     blockIcon: {fileID: 1183758795, guid: a7dac7be2b37549909612e597d5ffea4, type: 3}
     isSolid: 1
     renderNeighbors: 0
-    transparency: 0
+    opacity: 15
     maxStackSize: 64
     topFaceTexture: 10
     frontFaceTexture: 9
@@ -433,7 +435,7 @@ MonoBehaviour:
     blockIcon: {fileID: 1373512655, guid: a7dac7be2b37549909612e597d5ffea4, type: 3}
     isSolid: 1
     renderNeighbors: 1
-    transparency: 0.5
+    opacity: 5
     maxStackSize: 64
     topFaceTexture: 11
     frontFaceTexture: 11
@@ -445,6 +447,10 @@ MonoBehaviour:
   cursorSlot: {fileID: 794609508}
   debugScreen: {fileID: 672486804}
   clouds: {fileID: 698917844}
+  worldLoad:
+    worldName: 
+    seed: 0
+  appPath: 
 --- !u!4 &185321961
 Transform:
   m_ObjectHideFlags: 0

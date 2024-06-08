@@ -28,9 +28,6 @@ public class ChunkData {
     // ChunkData constructor
     public ChunkData(ChunkCoord _chunkCoord) {
         chunkCoord = _chunkCoord;
-    }
-
-    public void Init() {
 
         chunkObject = new GameObject();
         meshFilter = chunkObject.AddComponent<MeshFilter>();
@@ -47,9 +44,7 @@ public class ChunkData {
 
         chunkLoad = WorldData.instance.worldLoad.RequestChunk(new Vector2Int((int)chunkPosition.x, (int)chunkPosition.z), true);
 
-        lock(WorldData.instance.chunkUpdateThreadLock) {
-            WorldData.instance.chunksToUpdate.Add(this);
-        }
+        WorldData.instance.AddChunkToUpdate(this);
 
     }
 
@@ -57,7 +52,6 @@ public class ChunkData {
     public void UpdateChunkMesh() {
 
         ClearMeshData();
-        CalculateLight();
 
         for (int y = 0; y < VoxelData.chunkHeight; ++y) {
             for (int x = 0; x < VoxelData.chunkWidth; ++x) {
@@ -74,53 +68,7 @@ public class ChunkData {
 
     }
 
-    private void CalculateLight() {
 
-        Queue<Vector3Int> litVoxels = new Queue<Vector3Int>();
-
-        for (int x = 0; x < VoxelData.chunkWidth; ++x) {
-            for (int z = 0; z < VoxelData.chunkWidth; ++z) {
-
-                float lightRay = 1f;
-
-                for (int y = VoxelData.chunkHeight - 1; y >= 0; --y) {
-
-                    VoxelState thisVoxel = chunkLoad.map[x, y, z];
-                    if (thisVoxel.id > 0 && WorldData.instance.blockTypes[thisVoxel.id].transparency < lightRay)
-                        lightRay = WorldData.instance.blockTypes[thisVoxel.id].transparency;
-                    thisVoxel.globalLightPercent = lightRay;
-
-                    chunkLoad.map[x, y, z] = thisVoxel;
-
-                    if (lightRay > VoxelData.lightFalloff) litVoxels.Enqueue(new Vector3Int(x, y, z));
-
-                }
-            }
-        }
-
-        while (litVoxels.Count > 0) {
-
-            Vector3Int litVoxel = litVoxels.Dequeue();
-
-            for (int face = 0; face < 6; ++face) {
-                Vector3 currentVoxel = litVoxel + VoxelData.faceChecks[face];
-                Vector3Int neighbor = new Vector3Int((int)currentVoxel.x, (int)currentVoxel.y, (int)currentVoxel.z);
-
-                if (!IsVoxelInChunk(neighbor.x, neighbor.y, neighbor.z)) continue;
-
-                if (chunkLoad.map[neighbor.x, neighbor.y, neighbor.z].globalLightPercent < chunkLoad.map[litVoxel.x, litVoxel.y, litVoxel.z].globalLightPercent - VoxelData.lightFalloff) {
-
-                    chunkLoad.map[neighbor.x, neighbor.y, neighbor.z].globalLightPercent =
-                        chunkLoad.map[litVoxel.x, litVoxel.y, litVoxel.z].globalLightPercent - VoxelData.lightFalloff;
-
-                    if (chunkLoad.map[neighbor.x, neighbor.y, neighbor.z].globalLightPercent > VoxelData.lightFalloff)
-                        litVoxels.Enqueue(neighbor);
-                }
-
-            }
-        }
-
-    }
 
     private void ClearMeshData() {
 
@@ -164,7 +112,7 @@ public class ChunkData {
         chunkLoad.map[xBlock, yBlock, zBlock].id = newID;
 
         lock (WorldData.instance.chunkUpdateThreadLock) {
-            WorldData.instance.chunksToUpdate.Insert(0, this);
+            WorldData.instance.AddChunkToUpdate(this, true);
             UpdateSurroundingVoxels(new Vector3(xBlock, yBlock, zBlock));
         }
 
@@ -177,7 +125,7 @@ public class ChunkData {
         for (int face = 0; face < 6; ++face) {
             Vector3 voxel = position + VoxelData.faceChecks[face];
             if (!IsVoxelInChunk((int)voxel.x, (int)voxel.y, (int)voxel.z))
-                WorldData.instance.chunksToUpdate.Insert(0, WorldData.instance.GetChunkFromVector3(voxel + chunkPosition));
+                WorldData.instance.AddChunkToUpdate(WorldData.instance.GetChunkFromVector3(voxel + chunkPosition), true);
         }
 
     }
@@ -216,14 +164,13 @@ public class ChunkData {
         int y = Mathf.FloorToInt(position.y);
         int z = Mathf.FloorToInt(position.z);
 
-        byte blockID = chunkLoad.map[x, y, z].id;
-        // bool isTransparent = WorldData.instance.blockTypes[blockID].renderNeighbors;
+        VoxelState voxel = chunkLoad.map[x, y, z];
 
         for (int face = 0; face < 6; ++face) {
 
             VoxelState neighbor = CheckVoxel(position + VoxelData.faceChecks[face]);
 
-            if (neighbor == null || !WorldData.instance.blockTypes[neighbor.id].renderNeighbors) continue;
+            if (neighbor == null || !neighbor.properties.renderNeighbors) continue;
 
             vertices.Add(position + VoxelData.VoxelVertices[VoxelData.VoxelTriangles[face, 0]]);
             vertices.Add(position + VoxelData.VoxelVertices[VoxelData.VoxelTriangles[face, 1]]);
@@ -233,16 +180,16 @@ public class ChunkData {
             for (int idx = 0; idx < 4; ++idx)
                 normals.Add(VoxelData.faceChecks[face]);
 
-            AddTexture(WorldData.instance.blockTypes[blockID].GetTextureID(face));
+            AddTexture(voxel.properties.GetTextureID(face));
 
-            float lightLevel = neighbor.globalLightPercent;
+            float lightLevel = neighbor.lightAsFloat;
 
             colors.Add(new Color(0, 0, 0, lightLevel));
             colors.Add(new Color(0, 0, 0, lightLevel));
             colors.Add(new Color(0, 0, 0, lightLevel));
             colors.Add(new Color(0, 0, 0, lightLevel));
 
-            if (!WorldData.instance.blockTypes[neighbor.id].renderNeighbors) {
+            if (!neighbor.properties.renderNeighbors) {
                 triangles.Add(vertexIndex);
                 triangles.Add(vertexIndex + 1);
                 triangles.Add(vertexIndex + 2);
@@ -317,22 +264,5 @@ public class ChunkCoord {
         if (other == null) return false;
         if (other.x == x && other.z == z) return true;
         return false;
-    }
-}
-
-[HideInInspector]
-[System.Serializable]
-public class VoxelState {
-    public byte id;
-    public float globalLightPercent;
-
-    public VoxelState() {
-        id = 0;
-        globalLightPercent = 0f;
-    }
-
-    public VoxelState(byte _id) {
-        id = _id;
-        globalLightPercent = 0f;
     }
 }

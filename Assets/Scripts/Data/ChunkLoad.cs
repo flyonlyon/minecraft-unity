@@ -32,6 +32,7 @@ public class ChunkLoad {
             }
         }
 
+        Lighting.RecalculateNaturalLight(this);
         WorldData.instance.worldLoad.AddToModifiedChunkList(this);
 
     }
