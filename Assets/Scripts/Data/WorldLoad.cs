@@ -1,21 +1,32 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+[HideInInspector]
 [System.Serializable]
 public class WorldLoad {
 
     public string worldName = "Prototype";
     public int seed;
 
+    [System.NonSerialized]
     public Dictionary<Vector2Int, ChunkLoad> chunks = new Dictionary<Vector2Int, ChunkLoad>();
 
+    [System.NonSerialized]
+    public List<ChunkLoad> modifiedChunks = new List<ChunkLoad>();
+
+    public WorldLoad(string _worldName, int _seed) { worldName = _worldName; seed = _seed; }
+    public WorldLoad(WorldLoad world) { worldName = world.worldName; seed = world.seed; }
+
+    public void AddToModifiedChunkList(ChunkLoad chunk) {
+        if (!modifiedChunks.Contains(chunk)) modifiedChunks.Add(chunk);
+    }
 
     public ChunkLoad RequestChunk(Vector2Int _coord, bool _create) {
 
         ChunkLoad chunk;
 
-        lock(WorldData.instance.chunkListThreadLock) {
+        lock (WorldData.instance.chunkListThreadLock) {
 
             if (chunks.ContainsKey(_coord)) {
                 return chunks[_coord];
@@ -34,6 +45,12 @@ public class WorldLoad {
     public void LoadChunk(Vector2Int _coord) {
 
         if (chunks.ContainsKey(_coord)) return;
+
+        ChunkLoad chunk = SaveSystem.LoadChunk(worldName, _coord);
+        if (chunk != null) {
+            chunks.Add(_coord, chunk);
+            return;
+        }
 
         chunks.Add(_coord, new ChunkLoad(_coord));
         chunks[_coord].Populate();
@@ -80,6 +97,7 @@ public class WorldLoad {
 
         chunk.map[voxel.x, voxel.y, voxel.z].id = value;
 
-    }
+        AddToModifiedChunkList(chunk);
 
+    }
 }

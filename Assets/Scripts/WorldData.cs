@@ -57,7 +57,8 @@ public class WorldData : MonoBehaviour {
 
     [Header("Other")]
     public Clouds clouds;
-    public WorldLoad worldLoad = new WorldLoad();
+    public WorldLoad worldLoad;
+    public string appPath;
 
 
     public void Awake() {
@@ -67,9 +68,13 @@ public class WorldData : MonoBehaviour {
 
         _instance = this;
 
+        appPath = Application.persistentDataPath;
+
     }
 
     private void Start() {
+
+        worldLoad = SaveSystem.LoadWorld("Skibidi");
 
         string settingsJSON = File.ReadAllText(Application.dataPath + "/settings.cfg");
         settings = JsonUtility.FromJson<Settings>(settingsJSON);
@@ -122,6 +127,9 @@ public class WorldData : MonoBehaviour {
 
         if (Input.GetKeyDown(KeyCode.F3))
             debugScreen.SetActive(!debugScreen.activeSelf);
+
+        if (Input.GetKeyDown(KeyCode.F1))
+            SaveSystem.SaveWorld(worldLoad);
     }
 
     // GenerateWorld() creates all world chunks

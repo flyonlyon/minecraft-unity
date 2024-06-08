@@ -168,6 +168,8 @@ public class ChunkData {
             UpdateSurroundingVoxels(new Vector3(xBlock, yBlock, zBlock));
         }
 
+        WorldData.instance.worldLoad.AddToModifiedChunkList(chunkLoad);
+
     }
 
     private void UpdateSurroundingVoxels(Vector3 position) {
@@ -318,6 +320,8 @@ public class ChunkCoord {
     }
 }
 
+[HideInInspector]
+[System.Serializable]
 public class VoxelState {
     public byte id;
     public float globalLightPercent;
