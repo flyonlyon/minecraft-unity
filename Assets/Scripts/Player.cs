@@ -44,21 +44,12 @@ public class Player : MonoBehaviour {
 
     private void Update() {
 
-        if (Input.GetKeyDown(KeyCode.P)) Display();
-
         if (Input.GetKeyDown(KeyCode.E)) world.inUI = !world.inUI;
         if (!world.inUI) {
             GetPlayerInputs();
             PlaceOrBreakBlock();
         }
         
-    }
-
-    private void Display()
-    {
-        foreach (ChunkData c in world.chunksToUpdate)
-            Debug.Log("ChunkToUpdate (" + c.chunkCoord.x + ", " + c.chunkCoord.z + "): Editable=" + c.isEditable);
-        Debug.Log("ChunkLock: " + world.chunkUpdateThreadLock);
     }
 
     private void FixedUpdate() {
