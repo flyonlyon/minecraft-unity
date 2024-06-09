@@ -313,6 +313,7 @@ MonoBehaviour:
   blockTypes:
   - blockName: Air
     blockIcon: {fileID: 0}
+    meshData: {fileID: 0}
     isSolid: 0
     renderNeighbors: 1
     opacity: 0
@@ -325,6 +326,7 @@ MonoBehaviour:
     bottomFaceTexture: 0
   - blockName: Bedrock
     blockIcon: {fileID: -2135083169, guid: a7dac7be2b37549909612e597d5ffea4, type: 3}
+    meshData: {fileID: 11400000, guid: 8c6e83bdca6f741df991d76284e0a0cd, type: 2}
     isSolid: 1
     renderNeighbors: 0
     opacity: 15
@@ -337,6 +339,7 @@ MonoBehaviour:
     bottomFaceTexture: 0
   - blockName: Grass
     blockIcon: {fileID: 466796369, guid: a7dac7be2b37549909612e597d5ffea4, type: 3}
+    meshData: {fileID: 11400000, guid: 8c6e83bdca6f741df991d76284e0a0cd, type: 2}
     isSolid: 1
     renderNeighbors: 0
     opacity: 15
@@ -349,6 +352,7 @@ MonoBehaviour:
     bottomFaceTexture: 3
   - blockName: Dirt
     blockIcon: {fileID: 1528604508, guid: a7dac7be2b37549909612e597d5ffea4, type: 3}
+    meshData: {fileID: 11400000, guid: 8c6e83bdca6f741df991d76284e0a0cd, type: 2}
     isSolid: 1
     renderNeighbors: 0
     opacity: 15
@@ -361,6 +365,7 @@ MonoBehaviour:
     bottomFaceTexture: 3
   - blockName: Stone
     blockIcon: {fileID: -1068425898, guid: a7dac7be2b37549909612e597d5ffea4, type: 3}
+    meshData: {fileID: 11400000, guid: 8c6e83bdca6f741df991d76284e0a0cd, type: 2}
     isSolid: 1
     renderNeighbors: 0
     opacity: 15
@@ -373,6 +378,7 @@ MonoBehaviour:
     bottomFaceTexture: 4
   - blockName: Deepstone
     blockIcon: {fileID: 309166713, guid: a7dac7be2b37549909612e597d5ffea4, type: 3}
+    meshData: {fileID: 11400000, guid: 8c6e83bdca6f741df991d76284e0a0cd, type: 2}
     isSolid: 1
     renderNeighbors: 0
     opacity: 15
@@ -385,6 +391,7 @@ MonoBehaviour:
     bottomFaceTexture: 5
   - blockName: Brimstone
     blockIcon: {fileID: 568429565, guid: a7dac7be2b37549909612e597d5ffea4, type: 3}
+    meshData: {fileID: 11400000, guid: 8c6e83bdca6f741df991d76284e0a0cd, type: 2}
     isSolid: 1
     renderNeighbors: 0
     opacity: 15
@@ -397,6 +404,7 @@ MonoBehaviour:
     bottomFaceTexture: 6
   - blockName: Sand
     blockIcon: {fileID: -1572316903, guid: a7dac7be2b37549909612e597d5ffea4, type: 3}
+    meshData: {fileID: 11400000, guid: 8c6e83bdca6f741df991d76284e0a0cd, type: 2}
     isSolid: 1
     renderNeighbors: 0
     opacity: 15
@@ -409,6 +417,7 @@ MonoBehaviour:
     bottomFaceTexture: 7
   - blockName: Glass
     blockIcon: {fileID: 1961054751, guid: a7dac7be2b37549909612e597d5ffea4, type: 3}
+    meshData: {fileID: 11400000, guid: 8c6e83bdca6f741df991d76284e0a0cd, type: 2}
     isSolid: 1
     renderNeighbors: 1
     opacity: 0
@@ -421,6 +430,7 @@ MonoBehaviour:
     bottomFaceTexture: 8
   - blockName: Log
     blockIcon: {fileID: 1183758795, guid: a7dac7be2b37549909612e597d5ffea4, type: 3}
+    meshData: {fileID: 11400000, guid: 8c6e83bdca6f741df991d76284e0a0cd, type: 2}
     isSolid: 1
     renderNeighbors: 0
     opacity: 15
@@ -433,6 +443,7 @@ MonoBehaviour:
     bottomFaceTexture: 10
   - blockName: Leaves
     blockIcon: {fileID: 1373512655, guid: a7dac7be2b37549909612e597d5ffea4, type: 3}
+    meshData: {fileID: 11400000, guid: 8c6e83bdca6f741df991d76284e0a0cd, type: 2}
     isSolid: 1
     renderNeighbors: 1
     opacity: 5

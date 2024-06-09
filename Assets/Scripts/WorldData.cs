@@ -343,6 +343,7 @@ public class BlockType {
 
     public string blockName;
     public Sprite blockIcon;
+    public VoxelMeshData meshData;
 
     public bool isSolid;
     public bool renderNeighbors;
