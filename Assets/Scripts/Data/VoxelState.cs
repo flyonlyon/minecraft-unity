@@ -1,8 +1,10 @@
+// CLEAN
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[HideInInspector]
+
 [System.Serializable]
 public class VoxelState {
 
@@ -13,30 +15,60 @@ public class VoxelState {
     [System.NonSerialized] public VoxelNeighbors neighbors;
     [System.NonSerialized] public Vector3Int position;
 
+    
+    public byte castLight {
+        get {
+
+            int lightLevel = _light - properties.opacity - 1;
+            if (lightLevel < 0) lightLevel = 0;
+            return (byte)lightLevel;
+
+        }
+    }
+
     public byte light {
         get { return _light; }
         set {
 
             if (value == _light) return;
 
+            byte oldLightValue = _light;
+            byte oldCastValue = castLight;
             _light = value;
-            if (light > 1) PropagateLight();
+
+            if (_light < oldLightValue) {
+
+                List<int> neighborsToDarken = new List<int>();
+                for (int face = 0; face < 6; ++face) {
+
+                    if (neighbors[face] == null) continue;
+
+                    if (neighbors[face].light <= oldCastValue) neighborsToDarken.Add(face);
+                    else neighbors[face].PropagateLight();
+
+                }
+
+                foreach (int idx in neighborsToDarken)
+                    neighbors[idx].light = 0;
+
+                if (chunk.chunk != null) WorldData.instance.AddChunkToUpdate(chunk.chunk);
+
+            } else if (_light > 1)
+                PropagateLight();
 
         }
     }
+
+    public float lightAsFloat { get { return light * VoxelData.unitOfLight; } }
 
     public Vector3Int globalPosition {
         get { return new Vector3Int(position.x + chunk.position.x, position.y, position.z + chunk.position.y); }
     }
 
-    public float lightAsFloat { get { return (float)light * VoxelData.unitOfLight; } }
-    public byte castLight {
-        get {
-            int lightLevel = _light - properties.opacity - 1;
-            if (lightLevel < 0) lightLevel = 0;
-            return (byte)lightLevel;
-        }
+    public BlockType properties {
+        get { return WorldData.instance.blockTypes[id]; }
     }
+
 
     public VoxelState(byte _id, ChunkLoad _chunk, Vector3Int _position) {
 
@@ -54,30 +86,25 @@ public class VoxelState {
 
         for (int face = 0; face < 6; ++face) {
 
-            if (neighbors[face] == null) continue;
+            if (neighbors[face] != null)
+                if (neighbors[face].light < castLight)
+                    neighbors[face].light = castLight;
 
-            if (neighbors[face].light < light - 1)
-                neighbors[face].light = castLight;
-
+            if (chunk.chunk != null)
+                WorldData.instance.AddChunkToUpdate(chunk.chunk);
 
         }
 
     }
-
-    public BlockType properties {
-        get { return WorldData.instance.blockTypes[id]; }
-    }
-
 }
 
 public class VoxelNeighbors {
 
     public readonly VoxelState parent;
+    public VoxelNeighbors(VoxelState _parent) { parent = _parent; }
 
     private VoxelState[] _neighbors = new VoxelState[6];
     public int Length { get { return _neighbors.Length; } }
-
-    public VoxelNeighbors(VoxelState _parent) { parent = _parent; }
 
     public VoxelState this[int index] {
         get {
@@ -104,7 +131,6 @@ public class VoxelNeighbors {
 
         if (_neighbors[index].neighbors[VoxelData.reverseFaceCheck[index]] != parent)
             _neighbors[index].neighbors[VoxelData.reverseFaceCheck[index]] = parent;
+
     }
-
-
 }

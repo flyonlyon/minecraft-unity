@@ -1,19 +1,18 @@
-using System;
+// CLEAN
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[HideInInspector]
 [System.Serializable]
 public class WorldLoad {
 
     public string worldName = "Prototype";
     public int seed;
 
-    [System.NonSerialized]
-    public Dictionary<Vector2Int, ChunkLoad> chunks = new Dictionary<Vector2Int, ChunkLoad>();
+    [System.NonSerialized] public Dictionary<Vector2Int, ChunkLoad> chunks = new Dictionary<Vector2Int, ChunkLoad>();
+    [System.NonSerialized] public List<ChunkLoad> modifiedChunks = new List<ChunkLoad>();
 
-    [System.NonSerialized]
-    public List<ChunkLoad> modifiedChunks = new List<ChunkLoad>();
 
     public WorldLoad(string _worldName, int _seed) { worldName = _worldName; seed = _seed; }
     public WorldLoad(WorldLoad world) { worldName = world.worldName; seed = world.seed; }
@@ -29,7 +28,7 @@ public class WorldLoad {
         lock (WorldData.instance.chunkListThreadLock) {
 
             if (chunks.ContainsKey(_coord)) {
-                return chunks[_coord];
+                chunk = chunks[_coord];
             } else if (!_create) {
                 chunk = null;
             } else {
@@ -75,9 +74,10 @@ public class WorldLoad {
         x *= VoxelData.chunkWidth;
         z *= VoxelData.chunkWidth;
 
-        ChunkLoad chunk = RequestChunk(new Vector2Int(x, z), true);
-        Vector3Int voxel = new Vector3Int((int)(position.x - x), (int)position.y, (int)(position.z - z));
+        ChunkLoad chunk = RequestChunk(new Vector2Int(x, z), false);
+        if (chunk == null) return null;
 
+        Vector3Int voxel = new Vector3Int((int)(position.x - x), (int)position.y, (int)(position.z - z));
         return chunk.map[voxel.x, voxel.y, voxel.z];
 
     }
@@ -95,9 +95,7 @@ public class WorldLoad {
         ChunkLoad chunk = RequestChunk(new Vector2Int(x, z), true);
         Vector3Int voxel = new Vector3Int((int)(position.x - x), (int)position.y, (int)(position.z - z));
 
-        chunk.map[voxel.x, voxel.y, voxel.z].id = value;
-
-        AddToModifiedChunkList(chunk);
+        chunk.ModifyVoxel(voxel, value);
 
     }
 }

@@ -102,14 +102,8 @@ public class ChunkData {
         xBlock -= Mathf.FloorToInt(chunkObject.transform.position.x);
         zBlock -= Mathf.FloorToInt(chunkObject.transform.position.z);
 
-        chunkLoad.map[xBlock, yBlock, zBlock].id = newID;
-
-        lock (WorldData.instance.chunkUpdateThreadLock) {
-            WorldData.instance.AddChunkToUpdate(this, true);
-            UpdateSurroundingVoxels(new Vector3(xBlock, yBlock, zBlock));
-        }
-
-        WorldData.instance.worldLoad.AddToModifiedChunkList(chunkLoad);
+        chunkLoad.ModifyVoxel(new Vector3Int(xBlock, yBlock, zBlock), newID);
+        UpdateSurroundingVoxels(new Vector3(xBlock, yBlock, zBlock));
 
     }
 
