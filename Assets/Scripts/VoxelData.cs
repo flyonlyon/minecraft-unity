@@ -34,13 +34,15 @@ public static class VoxelData {
     };
 
     public static readonly Vector3Int[] faceChecks = new Vector3Int[6] {
-        new Vector3Int(0, 1, 0),
-        new Vector3Int(0, 0, 1),
-        new Vector3Int(1, 0, 0),
-        new Vector3Int(0, 0, -1),
-        new Vector3Int(-1, 0, 0),
-        new Vector3Int(0, -1, 0),
+        new Vector3Int(0, 1, 0), // Top Face
+        new Vector3Int(0, 0, 1), // Front Face
+        new Vector3Int(1, 0, 0), // Right Face
+        new Vector3Int(0, 0, -1), // Back Face
+        new Vector3Int(-1, 0, 0), // Left Face
+        new Vector3Int(0, -1, 0), // Bottom Face
     };
+
+    public static readonly int[] reverseFaceCheck = new int[6] { 5, 3, 4, 1, 2, 0 };
 
     public static readonly int[,] VoxelTriangles = new int[6, 4] {
         {3, 7, 2, 6}, // Top Face

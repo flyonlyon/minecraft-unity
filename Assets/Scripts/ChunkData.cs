@@ -43,6 +43,7 @@ public class ChunkData {
         meshRenderer.materials = materials;
 
         chunkLoad = WorldData.instance.worldLoad.RequestChunk(new Vector2Int((int)chunkPosition.x, (int)chunkPosition.z), true);
+        chunkLoad.chunk = this;
 
         WorldData.instance.AddChunkToUpdate(this);
 
@@ -92,14 +93,6 @@ public class ChunkData {
 
     }
 
-    // IsVoxelInChunk() returns whether the voxel is on the inside of a chunk
-    private bool IsVoxelInChunk(int x, int y, int z) {
-        return !(x < 0 || x > VoxelData.chunkWidth - 1 ||
-                 y < 0 || y > VoxelData.chunkHeight - 1 ||
-                 z < 0 || z > VoxelData.chunkWidth - 1);
-    }
-
-
     public void EditVoxel(Vector3 position, byte newID) {
 
         int xBlock = Mathf.FloorToInt(position.x);
@@ -124,23 +117,9 @@ public class ChunkData {
 
         for (int face = 0; face < 6; ++face) {
             Vector3 voxel = position + VoxelData.faceChecks[face];
-            if (!IsVoxelInChunk((int)voxel.x, (int)voxel.y, (int)voxel.z))
+            if (!chunkLoad.IsVoxelInChunk((int)voxel.x, (int)voxel.y, (int)voxel.z))
                 WorldData.instance.AddChunkToUpdate(WorldData.instance.GetChunkFromVector3(voxel + chunkPosition), true);
         }
-
-    }
-
-    // CheckVoxel() returns true if there is a solid block at the specified position
-    private VoxelState CheckVoxel(Vector3 position) {
-
-        int x = Mathf.FloorToInt(position.x);
-        int y = Mathf.FloorToInt(position.y);
-        int z = Mathf.FloorToInt(position.z);
-
-        if (!IsVoxelInChunk(x, y, z))
-            return WorldData.instance.GetVoxelState(position + chunkPosition);
-
-        return chunkLoad.map[x, y, z];
 
     }
 
@@ -168,7 +147,7 @@ public class ChunkData {
 
         for (int face = 0; face < 6; ++face) {
 
-            VoxelState neighbor = CheckVoxel(position + VoxelData.faceChecks[face]);
+            VoxelState neighbor = chunkLoad.map[x, y, z].neighbors[face];
 
             if (neighbor == null || !neighbor.properties.renderNeighbors) continue;
 
