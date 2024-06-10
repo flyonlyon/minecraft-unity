@@ -1,3 +1,5 @@
+// CLEAN
+
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -63,9 +65,8 @@ public class WorldData : MonoBehaviour {
     public void Awake() {
 
         if (_instance != null && _instance != this)
-            Destroy(this.gameObject);
-
-        _instance = this;
+            Destroy(gameObject);
+        else _instance = this;
 
         appPath = Application.persistentDataPath;
 
@@ -99,11 +100,14 @@ public class WorldData : MonoBehaviour {
             chunkUpdateThread = new Thread(new ThreadStart(ThreadedUpdate));
             chunkUpdateThread.Start();
         }
+
     }
 
     public void SetGlobalLightValue() {
+
         Shader.SetGlobalFloat("GlobalLightLevel", globalLightLevel);
         Camera.main.backgroundColor = Color.Lerp(night, day, globalLightLevel);
+
     }
 
     private void Update() {
@@ -132,7 +136,6 @@ public class WorldData : MonoBehaviour {
             SaveSystem.SaveWorld(worldLoad);
     }
 
-    // GenerateWorld() creates all world chunks
     private void LoadWorld() {
 
         for (int x = (VoxelData.worldSizeInChunks / 2) - settings.loadDistance; x < (VoxelData.worldSizeInChunks / 2) + settings.loadDistance; ++x) {
@@ -153,10 +156,10 @@ public class WorldData : MonoBehaviour {
 
         lock (chunkUpdateThreadLock) {
 
-            if (chunksToUpdate.Contains(chunk)) return;
-
-            if (insert) chunksToUpdate.Insert(0, chunk);
-            else chunksToUpdate.Add(chunk);
+            if (!chunksToUpdate.Contains(chunk)) {
+                if (insert) chunksToUpdate.Insert(0, chunk);
+                else chunksToUpdate.Add(chunk);
+            }
 
         }
 
@@ -189,6 +192,7 @@ public class WorldData : MonoBehaviour {
     }
 
     void ApplyModifications() {
+
         applyingModifications = true;
 
         while (modifications.Count > 0) {
@@ -203,9 +207,9 @@ public class WorldData : MonoBehaviour {
         }
 
         applyingModifications = false;
+
     }
 
-    // GetChunkCoordFromVector3() gets the coordinate of the chunk the given position is in
     private ChunkCoord GetChunkCoordFromVector3(Vector3 position) {
         int x = Mathf.FloorToInt(position.x / VoxelData.chunkWidth);
         int z = Mathf.FloorToInt(position.z / VoxelData.chunkWidth);
@@ -218,7 +222,6 @@ public class WorldData : MonoBehaviour {
         return chunks[x, z];
     }
 
-    // CheckViewDistance() creates chunks within the view distance that haven't been created
     public void CheckViewDistance() {
 
         clouds.UpdateClouds();
@@ -231,6 +234,7 @@ public class WorldData : MonoBehaviour {
 
         for (int x = chunkCoord.x - settings.viewDistance; x < chunkCoord.x + settings.viewDistance; ++x) {
             for (int z = chunkCoord.z - settings.viewDistance; z < chunkCoord.z + settings.viewDistance; ++z) {
+
                 ChunkCoord newChunkCoord = new ChunkCoord(x, z);
 
                 if (IsChunkInWorld(newChunkCoord)) {
@@ -257,7 +261,6 @@ public class WorldData : MonoBehaviour {
         return Mathf.FloorToInt(biome.solidGroundHeight + biome.terrainHeight * Noise.Get2DPerlin(new Vector2(x, z), 0, biome.terrainScale));
     }
 
-    // CheckForVoxel returns whether the voxel at the given global coordinates is solid
     public bool CheckForVoxel(Vector3 position) {
 
         VoxelState voxel = worldLoad.GetVoxel(position);
@@ -286,7 +289,6 @@ public class WorldData : MonoBehaviour {
 
     }
 
-    // GetVoxel() returns the block ID based on its position in the world
     public byte GetVoxel(Vector3 position) {
 
         int x = Mathf.FloorToInt(position.x);
@@ -326,14 +328,18 @@ public class WorldData : MonoBehaviour {
     }
 
     public bool IsChunkInWorld(ChunkCoord chunkCoord) {
+
         return (0 < chunkCoord.x && chunkCoord.x < VoxelData.worldSizeInChunks - 1 &&
                 0 < chunkCoord.z && chunkCoord.z < VoxelData.worldSizeInChunks - 1);
+
     }
      
     public bool IsVoxelInWorld(Vector3 position) {
+
         return (0 <= position.x && position.x < VoxelData.worldSizeInVoxels &&
                 0 <= position.y && position.y < VoxelData.chunkHeight &&
                 0 <= position.z && position.z < VoxelData.worldSizeInVoxels);
+
     }
 
 }

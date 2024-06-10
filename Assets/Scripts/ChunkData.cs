@@ -1,3 +1,5 @@
+// CLEAN
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,6 +7,7 @@ using UnityEngine;
 public class ChunkData {
 
     public ChunkCoord chunkCoord;
+
     public GameObject chunkObject;
     private MeshRenderer meshRenderer;
     private MeshFilter meshFilter;
@@ -19,28 +22,27 @@ public class ChunkData {
     List<Vector3> normals = new List<Vector3>();
 
     public Vector3 chunkPosition;
-
     private bool _isActive;
-
     ChunkLoad chunkLoad;
 
 
     // ChunkData constructor
     public ChunkData(ChunkCoord _chunkCoord) {
+
         chunkCoord = _chunkCoord;
 
         chunkObject = new GameObject();
         meshFilter = chunkObject.AddComponent<MeshFilter>();
         meshRenderer = chunkObject.AddComponent<MeshRenderer>();
 
+        materials[0] = WorldData.instance.material;
+        materials[1] = WorldData.instance.transparentMaterial;
+        meshRenderer.materials = materials;
+
         chunkObject.name = "Chunk (" + chunkCoord.x + ", " + chunkCoord.z + ")";
         chunkObject.transform.SetParent(WorldData.instance.transform);
         chunkObject.transform.position = new Vector3(chunkCoord.x * VoxelData.chunkWidth, 0f, chunkCoord.z * VoxelData.chunkWidth);
         chunkPosition = chunkObject.transform.position;
-
-        materials[0] = WorldData.instance.material;
-        materials[1] = WorldData.instance.transparentMaterial;
-        meshRenderer.materials = materials;
 
         chunkLoad = WorldData.instance.worldLoad.RequestChunk(new Vector2Int((int)chunkPosition.x, (int)chunkPosition.z), true);
         chunkLoad.chunk = this;
@@ -49,7 +51,6 @@ public class ChunkData {
 
     }
 
-    // CreateMeshData() adds all necessary faces to the chunk's mesh
     public void UpdateChunkMesh() {
 
         ClearMeshData();
@@ -128,9 +129,9 @@ public class ChunkData {
         zBlock -= Mathf.FloorToInt(chunkPosition.z);
 
         return chunkLoad.map[xBlock, yBlock, zBlock];
+
     }
 
-    // AddVoxelDataToChunk() adds the specified voxel's data to the chunk's mesh
     private void UpdateMeshData(Vector3 position) {
 
         int x = Mathf.FloorToInt(position.x);
@@ -170,7 +171,6 @@ public class ChunkData {
         }
     }
 
-    // CreateMesh() creates a mesh based on the chunk's vertices, triagles, and uvs
     public void CreateMesh() {
 
         Mesh mesh = new Mesh();
@@ -179,7 +179,7 @@ public class ChunkData {
         mesh.subMeshCount = 2;
         mesh.SetTriangles(triangles.ToArray(), 0);
         mesh.SetTriangles(transparentTriangles.ToArray(), 1);
-        // mesh.triangles = triangles.ToArray();
+
         mesh.uv = uvs.ToArray();
         mesh.colors = colors.ToArray();
         mesh.normals = normals.ToArray();
@@ -188,7 +188,6 @@ public class ChunkData {
 
     }
 
-    // AddTexture() adds the texture with the specified ID to the chunk's uvs
     private void AddTexture(int textureID, Vector2 uv) {
 
         float y = textureID / VoxelData.textureAtlasSizeInBlocks;
@@ -208,17 +207,18 @@ public class ChunkData {
 }
 
 public class ChunkCoord {
+
     public int x;
     public int z;
+
+    public ChunkCoord(int _x = 0, int _z = 0)  {
+        x = _x;
+        z = _z;
+    }
 
     public ChunkCoord(Vector3 position) {
         x = Mathf.FloorToInt(position.x) / VoxelData.chunkWidth;
         z = Mathf.FloorToInt(position.z) / VoxelData.chunkWidth;
-    }
-
-    public ChunkCoord(int _x = 0, int _z = 0) {
-        x = _x;
-        z = _z;
     }
 
     public bool Equals(ChunkCoord other) {
@@ -226,4 +226,5 @@ public class ChunkCoord {
         if (other.x == x && other.z == z) return true;
         return false;
     }
+
 }

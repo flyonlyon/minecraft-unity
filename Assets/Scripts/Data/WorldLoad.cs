@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
 [System.Serializable]
 public class WorldLoad {
 
@@ -12,7 +13,6 @@ public class WorldLoad {
 
     [System.NonSerialized] public Dictionary<Vector2Int, ChunkLoad> chunks = new Dictionary<Vector2Int, ChunkLoad>();
     [System.NonSerialized] public List<ChunkLoad> modifiedChunks = new List<ChunkLoad>();
-
 
     public WorldLoad(string _worldName, int _seed) { worldName = _worldName; seed = _seed; }
     public WorldLoad(WorldLoad world) { worldName = world.worldName; seed = world.seed; }

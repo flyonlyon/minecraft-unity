@@ -49,10 +49,11 @@ public class ChunkLoad {
     }
 
     public void ModifyVoxel(Vector3Int position, byte _id) {
+
         if (map[position.x, position.y, position.z].id == _id) return;
 
         VoxelState voxel = map[position.x, position.y, position.z];
-        BlockType newVoxel = WorldData.instance.blockTypes[_id];
+        // BlockType newVoxel = WorldData.instance.blockTypes[_id];
         byte oldOpacity = voxel.properties.opacity;
 
         voxel.id = _id;

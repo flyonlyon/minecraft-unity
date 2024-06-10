@@ -1,3 +1,5 @@
+// CLEAN
+
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -25,11 +27,9 @@ public static class SaveSystem {
 
     public static WorldLoad LoadWorld(string _worldName, int _seed = 0) {
 
-        string loadPath = Application.persistentDataPath + "/saves/" + _worldName + "/";
+        string loadPath = WorldData.instance.appPath + "/saves/" + _worldName + "/";
 
         if (File.Exists(loadPath + "world.world")) {
-
-            Debug.Log(_worldName + " found");
 
             BinaryFormatter formatter = new BinaryFormatter();
             FileStream stream = new FileStream(loadPath + "world.world", FileMode.Open);
@@ -41,14 +41,26 @@ public static class SaveSystem {
 
         } else {
 
-            Debug.Log(_worldName + " NOT found");
-
             WorldLoad world = new WorldLoad(_worldName, _seed);
             SaveWorld(world);
 
             return world;
 
         }
+    }
+
+    public static void SaveChunks(WorldLoad world) {
+
+        List<ChunkLoad> chunks = new List<ChunkLoad>(world.modifiedChunks);
+        world.modifiedChunks.Clear();
+
+        int count = 0;
+        foreach (ChunkLoad chunk in chunks) {
+            SaveChunk(chunk, world.worldName);
+            ++count;
+        }
+
+        Debug.Log(count + " chunks saved");
     }
 
     public static void SaveChunk(ChunkLoad chunk, string worldName) {
@@ -64,21 +76,6 @@ public static class SaveSystem {
         formatter.Serialize(stream, chunk);
         stream.Close();
 
-    }
-
-    public static void SaveChunks(WorldLoad world) {
-
-        List<ChunkLoad> chunks = new List<ChunkLoad>(world.modifiedChunks);
-        world.modifiedChunks.Clear();
-
-        int count = 0;
-        foreach (ChunkLoad chunk in chunks)
-        {
-            SaveSystem.SaveChunk(chunk, world.worldName);
-            ++count;
-        }
-
-        Debug.Log(count + " chunks saved");
     }
 
     public static ChunkLoad LoadChunk(string _worldName, Vector2Int position) {

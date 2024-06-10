@@ -26,6 +26,8 @@ public class VoxelState {
         }
     }
 
+    // =============== HAVE CHECKED ABOVE HERE ===============
+
     public byte light {
         get { return _light; }
         set {
